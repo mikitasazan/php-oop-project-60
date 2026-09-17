@@ -1,0 +1,20 @@
+{
+    "name": "hexlet/code",
+    "description": "Data Validator",
+    "minimum-stability": "stable",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Hexlet\\Validator\\": "src",
+            "Hexlet\\Validator\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=8.3"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.11",
+        "phpunit/phpunit": "^11.5",
+        "phpstan/phpstan": "^2.0"
+    }
+}
