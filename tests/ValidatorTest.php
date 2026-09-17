@@ -82,4 +82,58 @@ class ValidatorTest extends TestCase
         $this->assertTrue($schema->isValid(5));
         $this->assertFalse($schema->isValid(6));
     }
+
+    public function testArray(): void
+    {
+        $v = new Validator();
+        $schema = $v->array();
+
+        $this->assertTrue($schema->isValid(null));
+        $this->assertTrue($schema->isValid([]));
+
+        $schema->required();
+
+        $this->assertTrue($schema->isValid([]));
+        $this->assertTrue($schema->isValid(['hexlet']));
+        $this->assertFalse($schema->isValid(null));
+
+        $schema->sizeof(2);
+
+        $this->assertFalse($schema->isValid(['hexlet']));
+        $this->assertTrue($schema->isValid(['hexlet', 'code-basics']));
+    }
+
+    public function testArrayShape(): void
+    {
+        $v = new Validator();
+        $schema = $v->array();
+        $schema->shape([
+            'name' => $v->string()->required(),
+            'age' => $v->number()->positive(),
+        ]);
+
+        $this->assertTrue($schema->isValid(['name' => 'kolya', 'age' => 100]));
+        // age не required: null проходит
+        $this->assertTrue($schema->isValid(['name' => 'maya', 'age' => null]));
+        $this->assertFalse($schema->isValid(['name' => '', 'age' => null]));
+        $this->assertFalse($schema->isValid(['name' => 'ada', 'age' => -5]));
+    }
+
+    public function testCustomValidator(): void
+    {
+        $v = new Validator();
+        $fn = fn(string $value, string $start): bool => str_starts_with($value, $start);
+        $v->addValidator('string', 'startWith', $fn);
+
+        $schema = $v->string()->test('startWith', 'H');
+        $this->assertFalse($schema->isValid('exlet'));
+        $this->assertTrue($schema->isValid('Hexlet'));
+
+        $min = fn(int|float $value, int|float $bound): bool => $value >= $bound;
+        $v->addValidator('number', 'min', $min);
+
+        $numberSchema = $v->number()->test('min', 5);
+        $this->assertFalse($numberSchema->isValid(4));
+        $this->assertTrue($numberSchema->isValid(6));
+    }
 }

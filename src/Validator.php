@@ -30,6 +30,11 @@ class Validator
                     int|float $max,
                 ): bool => $value >= $min && $value <= $max,
             ],
+            'array' => [
+                'required' => static fn(mixed $value): bool => is_array($value),
+                'sizeof' => static fn(array $value, int $size): bool => count($value) === $size,
+                'shape' => static fn(array $value, callable $isValid): bool => $isValid($value),
+            ],
         ];
     }
 
@@ -41,6 +46,11 @@ class Validator
     public function number(): Schemas\NumberSchema
     {
         return new Schemas\NumberSchema($this->validatorsPerSchema['number']);
+    }
+
+    public function array(): Schemas\ArraySchema
+    {
+        return new Schemas\ArraySchema($this->validatorsPerSchema['array']);
     }
 
     /**
