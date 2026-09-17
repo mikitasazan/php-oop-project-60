@@ -21,12 +21,26 @@ class Validator
                 'contains' => static fn(string $value, string $substring): bool => str_contains($value, $substring),
                 'minLength' => static fn(string $value, int $length): bool => strlen($value) >= $length,
             ],
+            'number' => [
+                'required' => static fn(mixed $value): bool => is_int($value) || is_float($value),
+                'positive' => static fn(int|float $value): bool => $value > 0,
+                'range' => static fn(
+                    int|float $value,
+                    int|float $min,
+                    int|float $max,
+                ): bool => $value >= $min && $value <= $max,
+            ],
         ];
     }
 
     public function string(): Schemas\StringSchema
     {
         return new Schemas\StringSchema($this->validatorsPerSchema['string']);
+    }
+
+    public function number(): Schemas\NumberSchema
+    {
+        return new Schemas\NumberSchema($this->validatorsPerSchema['number']);
     }
 
     /**

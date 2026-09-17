@@ -56,11 +56,9 @@ class BaseSchema
      */
     public function isValid(mixed $value): bool
     {
-        if (!$this->required) {
-            $isRequiredValid = ($this->validators['required'])($value);
-            if (!$isRequiredValid) {
-                return true;
-            }
+        $isRequiredValid = ($this->validators['required'])($value);
+        if (!$isRequiredValid) {
+            return !$this->required;
         }
 
         foreach ($this->checks as ['validate' => $validate, 'arguments' => $arguments]) {
