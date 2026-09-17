@@ -9,20 +9,48 @@
 
 ## Стек
 
-- PHP
+- PHP 8.3+
+- PHPUnit — тесты
+- PHP_CodeSniffer (PSR12), PHPStan — линтеры
 
 ## Установка
-
-<!-- Опишите установку: клонирование, зависимости, переменные окружения -->
 
 ```bash
 git clone https://github.com/mikitasazan/php-oop-project-60.git
 cd php-oop-project-60
+make install
 ```
 
 ## Использование
 
-<!-- Добавьте примеры запуска и запись asciinema — именно это смотрит работодатель -->
+```php
+<?php
+
+use Hexlet\Validator\Validator;
+
+require 'vendor/autoload.php';
+
+$v = new Validator();
+
+$schema = $v->string()->required()->minLength(10);
+$schema->isValid('what does the fox say'); // true
+$schema->isValid('hexlet');                // false
+
+$number = $v->number()->required()->positive();
+$number->isValid(10);   // true
+$number->isValid(-10);  // false
+
+// собственный валидатор
+$v->addValidator('string', 'startWith', fn($value, $start) => str_starts_with($value, $start));
+$v->string()->test('startWith', 'H')->isValid('Hexlet'); // true
+```
+
+## Проверка локально
+
+```bash
+make lint   # phpcs (PSR12) + phpstan
+make test   # PHPUnit
+```
 
 ---
 
